@@ -1,5 +1,5 @@
 # RavenousSnake
-<h3>Make Harry the Snake eat the Apple Pie!!</h3>
+### Make Harry the Snake :snake: eat the Apple Pie!!
 <br>
 <br>
 This project is made using Java swing in NetBeans 11.0.
