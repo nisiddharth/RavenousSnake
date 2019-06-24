@@ -33,9 +33,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.speech.Central;
+import javax.speech.synthesis.*;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -69,6 +72,10 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
     private String name;
     private final int delay;
 
+    static SynthesizerModeDesc desc;
+    static Synthesizer synth;
+    static final String voiceName = "kevin16";
+
     private char prestep = 'r'; // contains l, r, u, d for previous step direction
 
     Font angry;
@@ -100,6 +107,34 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 
         loadHighscore();
 
+		//initialize TTS
+        try {
+            System.setProperty("FreeTTSSynthEngineCentral", "com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
+            System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+            Central.registerEngineCentral("com.sun.speech.freetts.jsapi.FreeTTSEngineCentral");
+
+            desc = new SynthesizerModeDesc(null, "general", Locale.US, null, null);
+
+            synth = Central.createSynthesizer(desc);
+            synth.allocate();
+            desc = (SynthesizerModeDesc) synth.getEngineModeDesc();
+            Voice[] voices = desc.getVoices();
+            Voice voice = null;
+            for (Voice entry : voices) {
+                if (entry.getName().equals(voiceName)) {
+                    voice = entry;
+                    break;
+                }
+            }
+            synth.getSynthesizerProperties().setVoice(voice);
+            synth.resume();
+        } catch (Exception ex) {
+            String message = " missing speech.properties in " + System.getProperty("user.home") + "\n";
+            System.out.println("" + ex);
+            System.out.println(message);
+            ex.printStackTrace();
+        }
+		
         angry = Font.createFont(Font.TRUETYPE_FONT, GamePlay.class.getResourceAsStream("font/angrybirds-regular.ttf"))
                 .deriveFont(40.0f);
         fira = Font.createFont(Font.TRUETYPE_FONT, GamePlay.class.getResourceAsStream("font/FiraCode-Retina.ttf"))
@@ -132,6 +167,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         timer = new Timer(delay, this);
+		speech("Welcome!");
         timer.start();
     }
 
@@ -192,20 +228,20 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
                 } else if (down) {
                     downmouth.paintIcon(this, g, snakexlength[i], snakeylength[i]);
                 } else {
-					switch(prestep) {
-						case 'r':
-							rightmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
-							break;
-						case 'l':
-							leftmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
-							break;
-						case 'u':
-							upmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
-							break;
-						case 'd':
-							downmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
-							break;
-					}
+                    switch (prestep) {
+                    case 'r':
+                        rightmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
+                        break;
+                    case 'l':
+                        leftmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
+                        break;
+                    case 'u':
+                        upmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
+                        break;
+                    case 'd':
+                        downmouth.paintIcon(this, g, snakexlength[0], snakeylength[0]);
+                        break;
+                    }
                 }
             } else {
                 snakeimage.paintIcon(this, g, snakexlength[i], snakeylength[i]);
@@ -232,6 +268,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("angrybirds", Font.BOLD, 50));
                 g.drawString("Game Over!", 303, 300);
+                speech("Game Over!");
                 g.setFont(new Font("fira code", Font.PLAIN, 20));
                 g.drawString("Press Spacebar to restart.", 283, 340);
                 if (score > highscore) {
@@ -382,7 +419,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
                 prestep = 'd';
                 repaint();
                 break;
-            } else if (!pause) {
+            } else if (!pause && !gameover) {
                 switch (prestep) {
                 case 'u':
                     up = true;
@@ -463,6 +500,26 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
             } catch (IOException ex) {
                 Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public static void speech(String text) {
+
+        if (text == null || text.trim().isEmpty())
+            return;
+
+        try {
+            synth.speakPlainText(text, null);
+            synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
+            // synth.deallocate();
+
+            // uncomment above if only want to speaking once
+
+        } catch (Exception ex) {
+            String message = " missing speech.properties in " + System.getProperty("user.home") + "\n";
+            System.out.println("" + ex);
+            System.out.println(message);
+            ex.printStackTrace();
         }
     }
 }
