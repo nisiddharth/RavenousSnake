@@ -1,5 +1,5 @@
 # RavenousSnake
-<h3>Make Harry the Snake :snake: eat the Apple Pie!!</h3>
+<h3>Make Harry the Snake 🐍 eat the Apple Pie!!</h3>
 <br>
 A beautiful snake game, with rich graphics and audio feedbacks.
 <br>
