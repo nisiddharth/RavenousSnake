@@ -9,7 +9,7 @@ This project is made using Java swing in NetBeans 11.0.
 <br>
 Find the executable JAR file (binary) in 'dist' folder or just download from here-
 <br>
-https://github.com/nisiddharth/RavenousSnake/raw/master/dist/Snake2D.jar
+https://github.com/nisiddharth/RavenousSnake/blob/master/dist/Snake2D.jar
 <br>
 <br>
 There is also a batch file provided in the 'dist' (https://github.com/nisiddharth/RavenousSnake/raw/master/dist) folder (run_in_windows.bat) to help run the game by just double clicking on the batch file (only applicable to Windows).
