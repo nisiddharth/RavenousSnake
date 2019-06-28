@@ -12,7 +12,7 @@ Find the executable JAR file (binary) in 'dist' folder or just download from her
 https://github.com/nisiddharth/RavenousSnake/blob/master/dist/Snake2D.jar
 <br>
 <br>
-There is also a batch file provided in the 'dist' (https://github.com/nisiddharth/RavenousSnake/raw/master/dist) folder (run_in_windows.bat) to help run the game by just double clicking on the batch file (only applicable to Windows).
+There is also a batch file provided in the 'dist' (https://github.com/nisiddharth/RavenousSnake/tree/master/dist) folder (run_in_windows.bat) to help run the game by just double clicking on the batch file (only applicable to Windows).
 <br>
 <br>
 <h3>Rules </h3>
